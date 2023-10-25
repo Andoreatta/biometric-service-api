@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations;
+
 public class Finger
 {
-    public uint Id { get; set; }
-    public string Template { get; set; }
+    public required uint Id { get; set; }
+    public required string Template { get; set; }
 }

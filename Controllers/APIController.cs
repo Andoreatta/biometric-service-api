@@ -20,19 +20,19 @@ namespace BiometricService.Controllers
         }
 
         [HttpPost("match-one-on-one")]
-        public string MatchOneOnOne([FromBody] string fingerprint_hash)
+        public bool MatchOneOnOne([FromBody] string fingerprintHash)
         {
-            return _biometric.MatchOneOnOne(fingerprint_hash);
+            return _biometric.IdentifyOneOnOne(fingerprintHash);
         }
 
         [HttpGet("identification")]
-        public string Identification()
+        public uint Identification()
         {
             return _biometric.Identification();
         }
 
         [HttpPost("load-to-memory")]
-        public string LoadToMemory([FromBody] Finger[] fingers)
+        public bool LoadToMemory([FromBody] Finger[] fingers)
         {
             return _biometric.LoadToMemory(fingers);
         }
