@@ -19,6 +19,12 @@ namespace BiometricService.Controllers
             return _biometric.CaptureHash();
         }
 
+        [HttpPost("match-one-on-one")]
+        public string MatchOneOnOne([FromBody] string fingerprint_hash)
+        {
+            return _biometric.MatchOneOnOne(fingerprint_hash);
+        }
+
         [HttpGet("identification")]
         public string Identification()
         {

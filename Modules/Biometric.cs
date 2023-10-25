@@ -13,7 +13,7 @@ public class Biometric
     public string CaptureHash()
     {
         APIServiceInstance._NBioAPI.OpenDevice(NBioAPI.Type.DEVICE_ID.AUTO);
-        uint ret = APIServiceInstance._NBioAPI.Capture(NBioAPI.Type.FIR_PURPOSE.VERIFY, out NBioAPI.Type.HFIR hCapturedFIR, NBioAPI.Type.TIMEOUT.DEFAULT, null, null);
+        uint ret = APIServiceInstance._NBioAPI.Capture(NBioAPI.Type.FIR_PURPOSE.ENROLL, out NBioAPI.Type.HFIR hCapturedFIR, NBioAPI.Type.TIMEOUT.DEFAULT, null, null);
         APIServiceInstance._NBioAPI.CloseDevice(NBioAPI.Type.DEVICE_ID.AUTO);
         if (ret != NBioAPI.Error.NONE) return "Error on Capture";
 
@@ -22,10 +22,27 @@ public class Biometric
         return textFIR.TextFIR;
     }
 
-    //public string MatchOneOnOne(string fingerprint_hash)
-    //{
+    public string MatchOneOnOne(string fingerprint_hash)
+    {
+        var textFir = new NBioAPI.Type.FIR_TEXTENCODE();
+        try
+        {
+            textFir.TextFIR = fingerprint_hash;
+            APIServiceInstance._NBioAPI.OpenDevice(NBioAPI.Type.DEVICE_ID.AUTO);
+            APIServiceInstance._NBioAPI.Capture(NBioAPI.Type.FIR_PURPOSE.VERIFY, out NBioAPI.Type.HFIR hCapturedFIR, NBioAPI.Type.TIMEOUT.DEFAULT, null, null);
+            APIServiceInstance._NBioAPI.CloseDevice(NBioAPI.Type.DEVICE_ID.AUTO);
 
-    //}
+            APIServiceInstance._NBioAPI.VerifyMatch(hCapturedFIR, textFir, out bool matched, null);
+            if (matched)
+                return "Matched";
+            else
+                return "Not matched";
+        }
+        catch (Exception ex)
+        {
+            return $"Error matching templates: {ex.Message}";
+        }
+    }
 
     public string Identification(){
         APIServiceInstance._NBioAPI.OpenDevice(NBioAPI.Type.DEVICE_ID.AUTO);
