@@ -60,6 +60,7 @@ var serviceApp = builder.Build();
 
 serviceApp.UseRouting();
 serviceApp.UseCors();
+serviceApp.UseHttpsRedirection();
 serviceApp.MapControllers();
 
 serviceApp.Run();

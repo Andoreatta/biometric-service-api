@@ -17,11 +17,23 @@ public class Biometric
         APIServiceInstance._NBioAPI.OpenDevice(NBioAPI.Type.DEVICE_ID.AUTO);
         uint ret = APIServiceInstance._NBioAPI.Capture(NBioAPI.Type.FIR_PURPOSE.ENROLL, out NBioAPI.Type.HFIR hCapturedFIR, NBioAPI.Type.TIMEOUT.DEFAULT, null, null);
         APIServiceInstance._NBioAPI.CloseDevice(NBioAPI.Type.DEVICE_ID.AUTO);
-        if (ret != NBioAPI.Error.NONE) return new BadRequestObjectResult($"Error on Capture: {ret}");
+        if (ret != NBioAPI.Error.NONE) return new BadRequestObjectResult(
+            new JsonObject
+            {
+                ["message"] = $"Error on Capture: {ret}",
+                ["success"] = false
+            }
+        );
 
         APIServiceInstance._NBioAPI.GetTextFIRFromHandle(hCapturedFIR, out NBioAPI.Type.FIR_TEXTENCODE textFIR, true);
 
-        return new OkObjectResult(textFIR.TextFIR);
+        return new OkObjectResult(
+            new JsonObject
+            {
+                ["fingerprintHash"] = textFIR.TextFIR,
+                ["success"] = true,
+            }
+        );
     }
 
     public IActionResult IdentifyOneOnOne(string fingerprintHash)
@@ -30,12 +42,20 @@ public class Biometric
         APIServiceInstance._NBioAPI.OpenDevice(NBioAPI.Type.DEVICE_ID.AUTO);
         uint ret = APIServiceInstance._NBioAPI.Verify(secondFir, out bool matched, null);
         APIServiceInstance._NBioAPI.CloseDevice(NBioAPI.Type.DEVICE_ID.AUTO);
-        if (ret != NBioAPI.Error.NONE) return new BadRequestObjectResult($"Error on Verify: {ret}");
-        
-        if (matched)
-            return new OkObjectResult(true);
-        else
-            return new OkObjectResult(false);
+        if (ret != NBioAPI.Error.NONE) return new BadRequestObjectResult(
+            new JsonObject
+            {
+                ["message"] = $"Error on Verify: {ret}",
+                ["success"] = false
+            }
+        );
+
+        return new OkObjectResult(
+            new JsonObject
+            {
+                ["message"] = matched ? "Fingerprint matches" : "Fingerprint doesnt match",
+                ["success"] = matched }
+            );
     }
 
     public IActionResult Identification()
@@ -43,18 +63,36 @@ public class Biometric
         APIServiceInstance._NBioAPI.OpenDevice(NBioAPI.Type.DEVICE_ID.AUTO);
         uint ret = APIServiceInstance._NBioAPI.Capture(NBioAPI.Type.FIR_PURPOSE.VERIFY, out NBioAPI.Type.HFIR hCapturedFIR, NBioAPI.Type.TIMEOUT.DEFAULT, null, null);
         APIServiceInstance._NBioAPI.CloseDevice(NBioAPI.Type.DEVICE_ID.AUTO);
-        if (ret != NBioAPI.Error.NONE) return new BadRequestObjectResult($"Error on Capture: {ret}");
+        if (ret != NBioAPI.Error.NONE) return new BadRequestObjectResult(
+            new JsonObject
+            {
+                ["message"] = $"Error on Capture: {ret}",
+                ["success"] = false
+            }
+        );
 
         APIServiceInstance._IndexSearch.IdentifyData(hCapturedFIR, NBioAPI.Type.FIR_SECURITY_LEVEL.NORMAL, out NBioAPI.IndexSearch.FP_INFO fpInfo, null);
-        if (fpInfo.ID != 0)
-            return new OkObjectResult(fpInfo.ID);
-        else
-            return new OkObjectResult("No match found");
+        
+        return new OkObjectResult(
+            new JsonObject 
+            {
+                ["message"] = fpInfo.ID != 0 ? "Fingerprint match found" : "Fingerprint match not found",
+                ["id"] = fpInfo.ID,
+                ["success"] = fpInfo.ID != 0
+            }
+        );
+
     }
 
     public IActionResult LoadToMemory(Finger[] fingers)
     {
-        if (fingers.Length == 0) return new BadRequestObjectResult("No templates to load");
+        if (fingers.Length == 0) return new BadRequestObjectResult(
+            new JsonObject
+            {
+                ["message"] = "No templates to load",
+                ["success"] = false
+            }
+        );
 
         var textFir = new NBioAPI.Type.FIR_TEXTENCODE();
         foreach (Finger fingerObject in fingers)
@@ -62,12 +100,24 @@ public class Biometric
             textFir.TextFIR = fingerObject.Template;
             APIServiceInstance._IndexSearch.AddFIR(textFir, fingerObject.Id, out _);
         }
-        return new OkObjectResult("Templates loaded to memory");
+        return new OkObjectResult(
+            new JsonObject
+            {
+                ["message"] = "Templates loaded to memory",
+                ["success"] = true
+            }
+        );
     }
 
     public IActionResult DeleteAllFromMemory()
     {
         APIServiceInstance._IndexSearch.ClearDB();
-        return new OkObjectResult("All templates deleted from memory");
+        return new OkObjectResult(
+            new JsonObject
+            {
+                ["message"] = "All templates deleted from memory",
+                ["success"] = true
+            }
+        );
     }
 }
