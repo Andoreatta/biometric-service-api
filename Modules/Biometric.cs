@@ -36,16 +36,17 @@ public class Biometric
         );
     }
 
-    public IActionResult IdentifyOneOnOne(string fingerprintHash)
+    public IActionResult IdentifyOneOnOne(JsonObject template)
     {
-        var secondFir = new NBioAPI.Type.FIR_TEXTENCODE { TextFIR = fingerprintHash };
+        var secondFir = new NBioAPI.Type.FIR_TEXTENCODE { TextFIR = template["fingerprintHash"]?.ToString() };
+
         APIServiceInstance._NBioAPI.OpenDevice(NBioAPI.Type.DEVICE_ID.AUTO);
         uint ret = APIServiceInstance._NBioAPI.Verify(secondFir, out bool matched, null);
         APIServiceInstance._NBioAPI.CloseDevice(NBioAPI.Type.DEVICE_ID.AUTO);
         if (ret != NBioAPI.Error.NONE) return new BadRequestObjectResult(
             new JsonObject
             {
-                ["message"] = $"Error on Verify: {ret}",
+                ["message"] = ret == NBioAPI.Error.CAPTURE_TIMEOUT ? "Timeout" : $"Error on Verify: {ret}",
                 ["success"] = false
             }
         );
@@ -71,10 +72,11 @@ public class Biometric
             }
         );
 
-        APIServiceInstance._IndexSearch.IdentifyData(hCapturedFIR, NBioAPI.Type.FIR_SECURITY_LEVEL.NORMAL, out NBioAPI.IndexSearch.FP_INFO fpInfo, null);
-        
+        NBioAPI.IndexSearch.CALLBACK_INFO_0 cbInfo = new();
+        APIServiceInstance._IndexSearch.IdentifyData(hCapturedFIR, NBioAPI.Type.FIR_SECURITY_LEVEL.NORMAL, out NBioAPI.IndexSearch.FP_INFO fpInfo, cbInfo);
+
         return new OkObjectResult(
-            new JsonObject 
+            new JsonObject
             {
                 ["message"] = fpInfo.ID != 0 ? "Fingerprint match found" : "Fingerprint match not found",
                 ["id"] = fpInfo.ID,
@@ -84,22 +86,34 @@ public class Biometric
 
     }
 
-    public IActionResult LoadToMemory(Finger[] fingers)
+    public IActionResult LoadToMemory(JsonArray fingers)
     {
-        if (fingers.Length == 0) return new BadRequestObjectResult(
-            new JsonObject
-            {
-                ["message"] = "No templates to load",
-                ["success"] = false
-            }
-        );
-
-        var textFir = new NBioAPI.Type.FIR_TEXTENCODE();
-        foreach (Finger fingerObject in fingers)
+        if (fingers.Count == 0)
         {
-            textFir.TextFIR = fingerObject.Template;
-            APIServiceInstance._IndexSearch.AddFIR(textFir, fingerObject.Id, out _);
+            return new BadRequestObjectResult(
+                new JsonObject
+                {
+                    ["message"] = "No templates to load",
+                    ["success"] = false
+                }
+            );
         }
+
+        uint ret;
+        var textFir = new NBioAPI.Type.FIR_TEXTENCODE();
+        foreach (JsonObject fingerObject in fingers)
+        {
+            textFir.TextFIR = fingerObject["Template"].ToString();
+            ret = APIServiceInstance._IndexSearch.AddFIR(textFir, (uint)fingerObject["id"], out _);
+            if (ret != NBioAPI.Error.NONE) return new BadRequestObjectResult(
+                new JsonObject
+                {
+                    ["message"] = $"Error on AddFIR: {ret}",
+                    ["success"] = false
+                }
+            );
+        }
+
         return new OkObjectResult(
             new JsonObject
             {

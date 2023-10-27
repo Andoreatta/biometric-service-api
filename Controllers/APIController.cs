@@ -21,7 +21,7 @@ namespace BiometricService.Controllers
         }
 
         [HttpPost("match-one-on-one")]
-        public IActionResult MatchOneOnOne([FromBody] string fingerprintHash)
+        public IActionResult MatchOneOnOne([FromBody] JsonObject fingerprintHash)
         {
             return _biometric.IdentifyOneOnOne(fingerprintHash);
         }
@@ -33,7 +33,7 @@ namespace BiometricService.Controllers
         }
 
         [HttpPost("load-to-memory")]
-        public IActionResult LoadToMemory([FromBody] Finger[] fingers)
+        public IActionResult LoadToMemory([FromBody] JsonArray fingers)
         {
             return _biometric.LoadToMemory(fingers);
         }
