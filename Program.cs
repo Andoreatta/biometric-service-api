@@ -39,11 +39,7 @@ if (args is { Length: 1 })
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddWindowsService(options =>
-{
-    options.ServiceName = "Biometric API";
-});
-
+builder.Services.AddWindowsService();
 LoggerProviderOptions.RegisterProviderOptions<EventLogSettings, EventLogLoggerProvider>(builder.Services);
 builder.Services.AddScoped<Biometric>();
 builder.Services.AddSingleton<APIService>();
@@ -64,8 +60,6 @@ var serviceApp = builder.Build();
 
 serviceApp.UseRouting();
 serviceApp.UseCors();
-serviceApp.UseHttpsRedirection();
-serviceApp.UseHsts();
 serviceApp.MapControllers();
 
 serviceApp.Run();

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Nodes;
 
 namespace BiometricService.Controllers
 {
@@ -14,31 +15,31 @@ namespace BiometricService.Controllers
         }
 
         [HttpGet("capture-hash")]
-        public string Capture()
+        public IActionResult Capture()
         {
             return _biometric.CaptureHash();
         }
 
         [HttpPost("match-one-on-one")]
-        public bool MatchOneOnOne([FromBody] string fingerprintHash)
+        public IActionResult MatchOneOnOne([FromBody] string fingerprintHash)
         {
             return _biometric.IdentifyOneOnOne(fingerprintHash);
         }
 
         [HttpGet("identification")]
-        public uint Identification()
+        public IActionResult Identification()
         {
             return _biometric.Identification();
         }
 
         [HttpPost("load-to-memory")]
-        public bool LoadToMemory([FromBody] Finger[] fingers)
+        public IActionResult LoadToMemory([FromBody] Finger[] fingers)
         {
             return _biometric.LoadToMemory(fingers);
         }
 
         [HttpGet("delete-all-from-memory")]
-        public string DeleteAllFromMemory()
+        public IActionResult DeleteAllFromMemory()
         {
             return _biometric.DeleteAllFromMemory();
         }

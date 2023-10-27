@@ -25,9 +25,9 @@ namespace BiometricService
             _logger.LogInformation("Biometric API Service is starting.");
             try
             {
+                _logger.LogInformation("Biometric API Service is running.");
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    _logger.LogInformation("Biometric API Service is running.");
                     await Task.Delay(5000, stoppingToken);
                 }
             }
