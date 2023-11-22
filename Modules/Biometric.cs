@@ -30,7 +30,7 @@ public class Biometric
         return new OkObjectResult(
             new JsonObject
             {
-                ["fingerprintHash"] = textFIR.TextFIR,
+                ["template"] = textFIR.TextFIR,
                 ["success"] = true,
             }
         );
@@ -38,7 +38,7 @@ public class Biometric
 
     public IActionResult IdentifyOneOnOne(JsonObject template)
     {
-        var secondFir = new NBioAPI.Type.FIR_TEXTENCODE { TextFIR = template["fingerprintHash"]?.ToString() };
+        var secondFir = new NBioAPI.Type.FIR_TEXTENCODE { TextFIR = template["template"]?.ToString() };
 
         APIServiceInstance._NBioAPI.OpenDevice(NBioAPI.Type.DEVICE_ID.AUTO);
         uint ret = APIServiceInstance._NBioAPI.Verify(secondFir, out bool matched, null);
@@ -103,7 +103,7 @@ public class Biometric
         var textFir = new NBioAPI.Type.FIR_TEXTENCODE();
         foreach (JsonObject fingerObject in fingers)
         {
-            textFir.TextFIR = fingerObject["Template"].ToString();
+            textFir.TextFIR = fingerObject["template"].ToString();
             ret = APIServiceInstance._IndexSearch.AddFIR(textFir, (uint)fingerObject["id"], out _);
             if (ret != NBioAPI.Error.NONE) return new BadRequestObjectResult(
                 new JsonObject

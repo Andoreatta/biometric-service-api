@@ -21,9 +21,9 @@ namespace BiometricService.Controllers
         }
 
         [HttpPost("match-one-on-one")]
-        public IActionResult MatchOneOnOne([FromBody] JsonObject fingerprintHash)
+        public IActionResult MatchOneOnOne([FromBody] JsonObject template)
         {
-            return _biometric.IdentifyOneOnOne(fingerprintHash);
+            return _biometric.IdentifyOneOnOne(template);
         }
 
         [HttpGet("identification")]

@@ -18,6 +18,7 @@ if (args is { Length: 1 })
                 .WithArguments(new[] { "create", ServiceName, $"binPath={executablePath}", "start=auto" })
                 .ExecuteAsync();
         }
+
         else if (args[0] is "/Uninstall")
         {
             await Cli.Wrap("sc")
