@@ -1,19 +1,19 @@
 # Biometric API
-API which talks to a local nitgen biometric device, perfect for web app integration.
+API que se comunica com um dispositivo biométrico local nitgen, perfeito para integração com aplicações web.
 
 ## Compiling
-- Requires eNBioBSP SDK libraries to be installed on the system.
-- .NET 7 or higher
+- Requer que as bibliotecas do SDK eNBioBSP estejam instaladas no sistema.
+- .NET 7 ou superior
 
-## Installing from release
-You can download an installer from the releases page on github.
+## Installing a partir do release
+Você pode baixar um instalador na página de releases no github.
 
 # API map
-The prefix is: `https://localhost:9000/apiservice/`  
-You can change the port at appsettings.json if you ever need in case of conflict.
+O prefixo é: `https://localhost:9000/apiservice/`  
+Você pode alterar a porta em appsettings.json se precisar em caso de conflito.
 
 #### GET: `capture-hash/`
-Activates biometric device to capture your fingerprint, in case it all goes well, returns:  
+Ativa o dispositivo biométrico para capturar sua impressão digital, caso tudo corra bem, retorna:  
 `200 | OK`
 ```json
 {
@@ -21,7 +21,7 @@ Activates biometric device to capture your fingerprint, in case it all goes well
     "success": true
 }
 ```
-anything else:  
+qualquer outra coisa:  
 `400 | BAD REQUEST`
 ```json
 {
@@ -33,14 +33,14 @@ anything else:
 --------------------------------
 
 #### POST: `match-one-on-one/`
-Receives a template and activates the biometric device to compare:  
-##### POST REQUEST content:
+Recebe um template e ativa o dispositivo biométrico para comparar:  
+##### conteúdo da requisição POST:
 ```json
 {
     "template": "AAAAAZCXZDSfe34t4f//..."
 }
 ```
-in case the procedure of verification goes well, returns:  
+caso o procedimento de verificação corra bem, retorna:  
 `200 | OK`
 ```json
 {
@@ -48,7 +48,7 @@ in case the procedure of verification goes well, returns:
     "success": true/false
 }
 ```
-anything else:  
+qualquer outra coisa:  
 `400 | BAD REQUEST`
 ```json
 {
@@ -60,7 +60,7 @@ anything else:
 --------------------------------
 
 #### GET: `identification/`
-Captures your fingerprint and does an index search (1:N) from the memory database, in case it all goes well:  
+Captura sua impressão digital e faz uma busca no índice (1:N) a partir do banco de dados em memória, caso tudo corra bem:  
 `200 | OK`
 ```json
 {
@@ -69,7 +69,7 @@ Captures your fingerprint and does an index search (1:N) from the memory databas
     "success": true/false
 }
 ```
-anything else:  
+qualquer outra coisa:  
 `400 | BAD REQUEST`
 ```json
 {
@@ -81,7 +81,7 @@ anything else:
 --------------------------------
 
 #### POST: `load-to-memory/`
-Receives an __array__ of templates with ID to load in memory of index search:
+Recebe um __array__ de templates com ID para carregar na memória do index search:  
 ##### POST REQUEST content:
 ```json
 [
@@ -96,7 +96,7 @@ Receives an __array__ of templates with ID to load in memory of index search:
     ...
 ]
 ```
-in case the procedure of verification goes well, returns:  
+caso o procedimento de verificação corra bem, retorna:  
 `200 | OK`
 ```json
 {
@@ -104,7 +104,7 @@ in case the procedure of verification goes well, returns:
     "success": true
 }
 ```
-anything else:  
+qualquer outra coisa:  
 `400 | BAD REQUEST`
 ```json
 {
@@ -116,7 +116,7 @@ anything else:
 ------------------------------
 
 #### GET: `delete-all-from-memory/`
-Deletes all the data stored in memory for index search usage, in case it all goes well, returns:  
+Exclui todos os dados armazenados na memória para uso no index search, caso tudo corra bem, retorna:    
 `200 | OK`
 ```json
 {
