@@ -1,14 +1,14 @@
 # Biometric API
 API que se comunica com um dispositivo biométrico local nitgen, perfeito para integração com aplicações web.
 
-## Compiling
+## Compilando
 - Requer que as bibliotecas do SDK eNBioBSP estejam instaladas no sistema.
 - .NET 7 ou superior
 
-## Installing a partir do release
+## Instalando a partir do release.
 Você pode baixar um instalador na página de releases no github.
 
-# API map
+# Mapa da API
 O prefixo é: `https://localhost:9000/apiservice/`  
 Você pode alterar a porta em appsettings.json se precisar em caso de conflito.
 
