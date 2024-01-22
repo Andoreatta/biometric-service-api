@@ -8,6 +8,8 @@ API que se comunica com um dispositivo biométrico local nitgen, perfeito para i
 ## Instalando a partir do release.
 O instalador deste projeto tem uma dependência de um outra aplicação para que funcione o seerviço corretamente, **[baixe e compile este projeto](https://github.com/FingerTechBR/biometric-tray-application)**. Você pode baixar um instalador na página de releases no github. O mesmo irá instalar uma aplicação que roda no tray que você poderá, clicando com o botão direito, iniciar ou parar o serviço. 
 
+Ou, você pode fazer com que a aplicação inicialize junto com o computador, criando um instalador com a extensão do Visual Studio, [Installer Project 2022](https://marketplace.visualstudio.com/items?itemName=VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects):
+
 # Mapa da API
 O prefixo é: `http://localhost:5000/apiservice/`  
 Você pode alterar a porta em appsettings.json se precisar em caso de conflito.
