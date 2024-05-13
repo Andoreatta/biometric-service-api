@@ -43,5 +43,17 @@ namespace BiometricService.Controllers
         {
             return _biometric.DeleteAllFromMemory();
         }
+
+        [HttpGet("total-in-memory")]
+        public IActionResult TotalIdsInMemory()
+        {
+            return _biometric.TotalIdsInMemory();
+        }
+
+        [HttpGet("device-unique-id")]
+        public IActionResult DeviceUniqueSerialID()
+        {
+            return _biometric.DeviceUniqueSerialID();
+        }
     }
 }

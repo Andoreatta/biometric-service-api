@@ -17,10 +17,11 @@ O prefixo é: `http://localhost:5000/apiservice/`
 Você pode alterar a porta em appsettings.json se precisar em caso de conflito.
 
 #### GET: `capture-hash/`
-Ativa o dispositivo biométrico para capturar sua impressão digital, caso tudo corra bem, retorna:  
+Ativa o dispositivo biométrico para capturar sua impressão digital, caso tudo corra bem imagens da captura atual são salvas localmente no diretório `%temp%/Fingers` e é retornado:  
 `200 | OK`
 ```json
 {
+    "fingers-registered": 1,
     "template": "AAAAAZCXZDSfe34t4f//...",  <------- fingerprint hash
     "success": true
 }
@@ -126,5 +127,31 @@ Exclui todos os dados armazenados na memória para uso no index search, caso tud
 {
     "message": "All templates deleted from memory",
     "success": true
+}
+```
+
+--------------------------------
+
+#### GET : `total-in-memory`
+
+Retorna a quantidade de templates armazenados na memória:
+`200 | OK`
+```json
+{
+	"total": 0,  <------ total templates
+	"success": true
+}
+```
+
+--------------------------------
+
+#### GET : `device-unique-id`
+
+Retorna o ID único do dispositivo biométrico:
+`200 | OK`
+```json
+{
+	"serial": "FF-FF-FF-FF-FF-FF-FF-FF",  <------ device ID
+	"success": true
 }
 ```

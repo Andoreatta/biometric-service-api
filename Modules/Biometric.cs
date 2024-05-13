@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NITGEN.SDK.NBioBSP;
 using System.Text.Json.Nodes;
+using static NITGEN.SDK.NBioBSP.NBioAPI.Export;
+using static NITGEN.SDK.NBioBSP.NBioAPI.Type;
 
 public class Biometric
 {
@@ -14,8 +16,9 @@ public class Biometric
     }
     public IActionResult CaptureHash()
     {
+        HFIR auditHFIR = new();
         APIServiceInstance._NBioAPI.OpenDevice(NBioAPI.Type.DEVICE_ID.AUTO);
-        uint ret = APIServiceInstance._NBioAPI.Capture(NBioAPI.Type.FIR_PURPOSE.ENROLL, out NBioAPI.Type.HFIR hCapturedFIR, NBioAPI.Type.TIMEOUT.DEFAULT, null, null);
+        uint ret = APIServiceInstance._NBioAPI.Capture(NBioAPI.Type.FIR_PURPOSE.ENROLL, out NBioAPI.Type.HFIR hCapturedFIR, NBioAPI.Type.TIMEOUT.DEFAULT, auditHFIR, null);
         APIServiceInstance._NBioAPI.CloseDevice(NBioAPI.Type.DEVICE_ID.AUTO);
         if (ret != NBioAPI.Error.NONE) return new BadRequestObjectResult(
             new JsonObject
@@ -25,15 +28,37 @@ public class Biometric
             }
         );
 
+        NBioAPI.Export NBioExport = new(APIServiceInstance._NBioAPI);
+        NBioExport.NBioBSPToImage(auditHFIR, out EXPORT_AUDIT_DATA exportAuditData);
+
+        string tempPath = Environment.ExpandEnvironmentVariables(@"%TEMP%\Fingers");
+
+        DirectoryInfo directoryInfo = new DirectoryInfo(tempPath);
+        FileInfo[] files = directoryInfo.GetFiles("*.*", SearchOption.TopDirectoryOnly);
+        foreach (FileInfo file in files)
+        {
+            if (file.Extension.ToLower() == ".jpg")
+            {
+                file.Delete();
+            }
+        }
+
         APIServiceInstance._NBioAPI.GetTextFIRFromHandle(hCapturedFIR, out NBioAPI.Type.FIR_TEXTENCODE textFIR, true);
 
+        foreach (AUDIT_DATA finger in exportAuditData.AuditData)
+        {
+            APIServiceInstance._NBioAPI.ImgConvRawToJpgBuf(finger.Image[0].Data, exportAuditData.ImageWidth, exportAuditData.ImageHeight, 1, out byte[] imgData);
+            Directory.CreateDirectory(tempPath);
+            File.WriteAllBytes($"{tempPath}\\finger_{finger.FingerID}.jpg", imgData);
+        }
+
         return new OkObjectResult(
-            new JsonObject
-            {
-                ["template"] = textFIR.TextFIR,
-                ["success"] = true,
-            }
-        );
+        new JsonObject
+        {
+            ["fingers-registered"] = exportAuditData.AuditData.GetLength(0),
+            ["template"] = textFIR.TextFIR,
+            ["success"] = true,
+        });
     }
 
     public IActionResult IdentifyOneOnOne(JsonObject template)
@@ -55,8 +80,9 @@ public class Biometric
             new JsonObject
             {
                 ["message"] = matched ? "Fingerprint matches" : "Fingerprint doesnt match",
-                ["success"] = matched }
-            );
+                ["success"] = matched
+            }
+        );
     }
 
     public IActionResult Identification()
@@ -134,4 +160,32 @@ public class Biometric
             }
         );
     }
+
+    public IActionResult TotalIdsInMemory()
+    {
+        APIServiceInstance._IndexSearch.GetDataCount(out UInt32 dataCount);
+        return new OkObjectResult(
+            new JsonObject
+            {
+                ["total"] = dataCount,
+                ["success"] = true
+            }
+        );
+    }
+
+    public IActionResult DeviceUniqueSerialID()
+    {
+        APIServiceInstance._NBioAPI.OpenDevice(NBioAPI.Type.DEVICE_ID.AUTO);
+        byte[] input = new byte[8];
+        APIServiceInstance._NBioAPI.DeviceIoControl(514, input, out byte[] deviceId);
+        APIServiceInstance._NBioAPI.CloseDevice(NBioAPI.Type.DEVICE_ID.AUTO);
+        return new OkObjectResult(
+            new JsonObject
+            {
+                ["serial"] = BitConverter.ToString(deviceId),
+                ["success"] = true
+            }
+        );
+    }
+
 }
