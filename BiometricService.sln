@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BiometricService", "BiometricService.csproj", "{696379F6-B07E-4A0B-8A82-1E687848909C}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Fingertech-API-installer", "..\Fingertech-API-installer\Fingertech-API-installer.vdproj", "{41FC0F61-600D-42A3-9986-B9E153E71E4C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,13 @@ Global
 		{696379F6-B07E-4A0B-8A82-1E687848909C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{696379F6-B07E-4A0B-8A82-1E687848909C}.Release|Default.ActiveCfg = Release|Any CPU
 		{696379F6-B07E-4A0B-8A82-1E687848909C}.Release|Default.Build.0 = Release|Any CPU
+		{41FC0F61-600D-42A3-9986-B9E153E71E4C}.Debug|Any CPU.ActiveCfg = Debug
+		{41FC0F61-600D-42A3-9986-B9E153E71E4C}.Debug|Default.ActiveCfg = Debug
+		{41FC0F61-600D-42A3-9986-B9E153E71E4C}.Debug|Default.Build.0 = Debug
+		{41FC0F61-600D-42A3-9986-B9E153E71E4C}.Release|Any CPU.ActiveCfg = Release
+		{41FC0F61-600D-42A3-9986-B9E153E71E4C}.Release|Any CPU.Build.0 = Release
+		{41FC0F61-600D-42A3-9986-B9E153E71E4C}.Release|Default.ActiveCfg = Release
+		{41FC0F61-600D-42A3-9986-B9E153E71E4C}.Release|Default.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

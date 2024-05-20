@@ -1,4 +1,5 @@
 using BiometricService;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NITGEN.SDK.NBioBSP;
@@ -31,7 +32,12 @@ public class Biometric
         NBioAPI.Export NBioExport = new(APIServiceInstance._NBioAPI);
         NBioExport.NBioBSPToImage(auditHFIR, out EXPORT_AUDIT_DATA exportAuditData);
 
-        string tempPath = Environment.ExpandEnvironmentVariables(@"%TEMP%\Fingers");
+        string tempPath = Environment.ExpandEnvironmentVariables(@"%TEMP%\fingers-registered");
+
+        if (!Directory.Exists(tempPath))
+        {
+            Directory.CreateDirectory(tempPath);
+        }
 
         DirectoryInfo directoryInfo = new DirectoryInfo(tempPath);
         FileInfo[] files = directoryInfo.GetFiles("*.*", SearchOption.TopDirectoryOnly);

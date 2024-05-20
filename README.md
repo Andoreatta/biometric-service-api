@@ -14,7 +14,7 @@ O prefixo é: `http://localhost:5000/apiservice/`
 Você pode alterar a porta em appsettings.json se precisar em caso de conflito.
 
 #### GET: `capture-hash/`
-Ativa o dispositivo biométrico para capturar sua impressão digital, caso tudo corra bem imagens da captura atual são salvas localmente no diretório `%temp%/Fingers` e é retornado:  
+Ativa o dispositivo biométrico para capturar sua impressão digital, caso tudo corra bem imagens da captura atual são salvas localmente no diretório `%temp%/fingers-registered` e é retornado:  
 `200 | OK`
 ```json
 {
