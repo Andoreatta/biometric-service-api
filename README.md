@@ -1,3 +1,7 @@
+!!!
+A última versão que estou mantendo utilizável é mantida no seguinte repositório https://github.com/FingerTechBR/BiometricServiceAPI  
+Toda e qualquer ocorrência deve ser reportada no repositório apontado.
+!!!
 # Biometric API
 API que se comunica com um dispositivo biométrico local nitgen, perfeito para integração com aplicações web.
 
